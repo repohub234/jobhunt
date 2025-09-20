@@ -272,7 +272,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <Button variant="outline" className="mt-4">
-                  Edit Profile
+                  <Link to="/profile/edit">Edit Profile</Link>
                 </Button>
               </CardContent>
             </Card>

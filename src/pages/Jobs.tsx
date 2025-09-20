@@ -90,15 +90,71 @@ export default function Jobs() {
 
   const addSampleJobs = async () => {
     try {
-      // First get companies to link jobs to them
-      const { data: companies } = await supabase
+      // First check if we have companies, if not create them
+      let { data: companies } = await supabase
         .from("companies")
         .select("id, name")
         .limit(5);
       
       if (!companies || companies.length === 0) {
-        console.log("No companies found, cannot add jobs");
-        return;
+        console.log("No companies found, creating sample companies first");
+        const { data: newCompanies, error: companyError } = await supabase
+          .from("companies")
+          .insert([
+            {
+              name: "TechCorp Solutions",
+              description: "Leading technology consulting firm specializing in digital transformation",
+              website: "https://techcorp.com",
+              location: "San Francisco, CA",
+              industry: "Technology",
+              size: "500-1000",
+              logo_url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=100&fit=crop&crop=center"
+            },
+            {
+              name: "GreenEnergy Inc",
+              description: "Renewable energy company focused on sustainable solutions",
+              website: "https://greenenergy.com",
+              location: "Austin, TX",
+              industry: "Energy",
+              size: "100-500",
+              logo_url: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=100&h=100&fit=crop&crop=center"
+            },
+            {
+              name: "FinanceFirst",
+              description: "Premier financial services and investment firm",
+              website: "https://financefirst.com",
+              location: "New York, NY",
+              industry: "Finance",
+              size: "1000+",
+              logo_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop&crop=center"
+            },
+            {
+              name: "HealthTech Innovations",
+              description: "Healthcare technology startup revolutionizing patient care",
+              website: "https://healthtech.com",
+              location: "Boston, MA",
+              industry: "Healthcare",
+              size: "50-100",
+              logo_url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=100&h=100&fit=crop&crop=center"
+            },
+            {
+              name: "DataDriven Analytics",
+              description: "Advanced analytics and machine learning solutions",
+              website: "https://datadriven.com",
+              location: "Seattle, WA",
+              industry: "Technology",
+              size: "100-500",
+              logo_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop&crop=center"
+            }
+          ])
+          .select();
+        
+        if (companyError) {
+          console.error("Error creating companies:", companyError);
+          return;
+        }
+        
+        companies = newCompanies;
       }
 
       const { error } = await supabase

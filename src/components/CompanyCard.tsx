@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { MapPin, Users, ExternalLink, Globe, Building2 } from "lucide-react";
+import { Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Company {

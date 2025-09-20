@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { addSampleData, checkConnection } from "@/utils/testData";
+import { testDatabaseConnection, initializeDatabase } from "@/utils/database";
 import { DebugPanel } from "@/components/DebugPanel";
 import { 
   Search, 
@@ -61,7 +62,19 @@ const Index = () => {
 
   useEffect(() => {
     fetchFeaturedJobs();
+    initializeApp();
   }, []);
+
+  const initializeApp = async () => {
+    try {
+      const isConnected = await testDatabaseConnection();
+      if (isConnected) {
+        await initializeDatabase();
+      }
+    } catch (error) {
+      console.error("App initialization failed:", error);
+    }
+  };
 
   const fetchFeaturedJobs = async () => {
     try {
@@ -75,7 +88,7 @@ const Index = () => {
       
       if (!existingJobs || existingJobs.length === 0) {
         console.log("No jobs found, adding sample data...");
-        await addSampleData();
+        await initializeDatabase();
       }
       
       const { data, error } = await supabase

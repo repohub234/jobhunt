@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { JobApplicationModal } from "@/components/JobApplicationModal";
 import { MapPin, Clock, DollarSign, Users, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface Job {
   id: string;
@@ -27,6 +31,10 @@ interface JobCardProps {
 }
 
 export const JobCard = ({ job }: JobCardProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+  
   const formatSalary = (min?: number, max?: number) => {
     if (!min && !max) return "Salary not specified";
     if (min && max) return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
@@ -46,7 +54,16 @@ export const JobCard = ({ job }: JobCardProps) => {
     return `${Math.floor(diffInDays / 30)} months ago`;
   };
 
+  const handleQuickApply = () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    setShowApplicationModal(true);
+  };
+
   return (
+    <>
     <Card className="card-modern hover-lift group">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
@@ -127,13 +144,25 @@ export const JobCard = ({ job }: JobCardProps) => {
             </Link>
           </Button>
           <Button size="sm" asChild className="btn-gradient">
-            <Link to={`/jobs/${job.id}`}>
-              Apply Now
-              <ExternalLink className="h-4 w-4 ml-2" />
-            </Link>
+            <button onClick={handleQuickApply}>
+              Quick Apply
+            </button>
           </Button>
         </div>
       </CardFooter>
     </Card>
+    
+    <JobApplicationModal
+      isOpen={showApplicationModal}
+      onClose={() => setShowApplicationModal(false)}
+      jobId={job.id}
+      jobTitle={job.title}
+      companyName={job.company.name}
+      userId={user?.id || ""}
+      onSuccess={() => {
+        // Optionally refresh data or show success message
+      }}
+    />
+    </>
   );
 };

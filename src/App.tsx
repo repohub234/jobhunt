@@ -16,6 +16,7 @@ import HireJob from "./pages/HireJob";
 import Contact from "./pages/Contact";
 import AdminAuth from "./pages/AdminAuth";
 import AdminDashboard from "./pages/AdminDashboard";
+import ProfileEdit from "./pages/ProfileEdit";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/admin/auth" element={<AdminAuth />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile/edit" element={<ProfileEdit />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

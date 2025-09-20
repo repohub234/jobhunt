@@ -67,12 +67,15 @@ export default function Auth() {
 
       // Save user type to profiles table (if using row-level security, this may need a trigger)
       if (data?.user?.id) {
-        await supabase.from("profiles").upsert({
+        const { error: profileError } = await supabase.from("profiles").upsert({
           user_id: data.user.id,
           full_name: fullName,
           email,
-          user_type: userType,
         });
+        
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+        }
       }
 
       toast({

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { addSampleData, checkConnection } from "@/utils/testData";
+import { testDatabaseConnection, initializeDatabase } from "@/utils/database";
 import { Database, Bug, CheckCircle, XCircle, Loader2 } from "lucide-react";
 
 export const DebugPanel = () => {
@@ -15,7 +15,7 @@ export const DebugPanel = () => {
   const testConnection = async () => {
     setIsLoading(true);
     try {
-      const isConnected = await checkConnection();
+      const isConnected = await testDatabaseConnection();
       setConnectionStatus(isConnected ? "connected" : "error");
       
       if (isConnected) {
@@ -42,7 +42,7 @@ export const DebugPanel = () => {
   const addData = async () => {
     setIsLoading(true);
     try {
-      await addSampleData();
+      await initializeDatabase();
       // Refresh counts
       await testConnection();
     } catch (error) {

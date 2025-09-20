@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { getUserProfile, createUserProfile } from "@/utils/database";
 
 interface AuthContextType {
   user: User | null;
@@ -30,9 +31,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Create profile if user signs up
+        if (event === 'SIGNED_UP' && session?.user) {
+          try {
+            await createUserProfile(session.user.id, {
+              full_name: session.user.user_metadata?.full_name || '',
+              email: session.user.email || '',
+              skills: [],
+              experience_level: 'entry',
+            });
+          } catch (error) {
+            console.error('Error creating user profile:', error);
+          }
+        }
+        
         setLoading(false);
       }
     );
